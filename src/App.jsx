@@ -30,7 +30,7 @@ const rows = [
 ]
 
 const statusClass = { Active: 'success', Inactive: 'danger' }
-const money = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value)
+const money = (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)
 
 function MetricCard({ label, value, change, trend, icon: Icon, tone }) {
   return <article className={`metric-card ${tone}`}><div className="metric-top"><span>{label}</span><span className="metric-icon"><Icon size={17} /></span></div><strong>{value}</strong><div className={`trend ${trend === 'down' ? 'down' : ''}`}>{trend === 'down' ? <ArrowDownRight size={14} /> : <ArrowUpRight size={14} />} {change}<span>vs last quarter</span></div></article>
