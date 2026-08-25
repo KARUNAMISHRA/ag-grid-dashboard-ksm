@@ -3,6 +3,10 @@
 .ag-theme-quartz .ag-cell { display: flex; align-items: center; }
 .account-cell { height: 64px; min-height: 64px; line-height: 1.15; overflow: hidden; }
 .compact-select { border: 1px solid #dce5ec; border-radius: 5px; padding: 8px 9px; color: #64768b; font-size: 11px; background: #fff; outline: 0; }
+.profile .avatar { font-size: 0; }
+.profile .avatar::after { content: 'UN'; font-size: 10px; }
+.profile b { font-size: 0; }
+.profile b::after { content: 'User Name'; font-size: 11px; }
 .ag-theme-quartz { --ag-row-height: 56px; }
 .ag-theme-quartz .ag-row { min-height: 56px; }
 .app-shell { min-height: 100vh; display: flex; background: #f4f7fb; }
