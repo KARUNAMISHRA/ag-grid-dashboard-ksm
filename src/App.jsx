@@ -1,77 +1,745 @@
-import { useMemo, useRef, useState } from 'react'
-import { AgGridReact } from 'ag-grid-react'
-import { AllCommunityModule, ModuleRegistry, themeQuartz } from 'ag-grid-community'
-import { Activity, ArrowDownRight, ArrowUpRight, BarChart3, Bell, CalendarDays, ChevronDown, Download, Filter, LayoutDashboard, ListFilter, RefreshCw, Search, Settings2, Sparkles, Users } from 'lucide-react'
-import './App.css'
+import { useMemo, useRef, useState } from "react";
+import { AgGridReact } from "ag-grid-react";
+import {
+  AllCommunityModule,
+  ModuleRegistry,
+  themeQuartz,
+} from "ag-grid-community";
+import {
+  Activity,
+  ArrowDownRight,
+  ArrowUpRight,
+  BarChart3,
+  Bell,
+  CalendarDays,
+  ChevronDown,
+  Download,
+  Filter,
+  LayoutDashboard,
+  ListFilter,
+  RefreshCw,
+  Search,
+  Settings2,
+  Sparkles,
+  Users,
+} from "lucide-react";
+import "./App.css";
 
-ModuleRegistry.registerModules([AllCommunityModule])
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 const rows = [
-  { id: 1, firstName: 'John', lastName: 'Smith', email: 'john.smith@company.com', department: 'Engineering', position: 'Senior Developer', salary: 95000, hireDate: '2021-03-15', age: 32, location: 'New York', performanceRating: 4.2, projectsCompleted: 12, isActive: true, skills: ['JavaScript', 'React', 'Node.js'], manager: 'Sarah Johnson' },
-  { id: 2, firstName: 'Emily', lastName: 'Davis', email: 'emily.davis@company.com', department: 'Marketing', position: 'Marketing Manager', salary: 78000, hireDate: '2020-07-22', age: 29, location: 'Los Angeles', performanceRating: 4.5, projectsCompleted: 8, isActive: true, skills: ['Digital Marketing', 'SEO', 'Analytics'], manager: 'Michael Brown' },
-  { id: 3, firstName: 'Michael', lastName: 'Brown', email: 'michael.brown@company.com', department: 'Marketing', position: 'VP Marketing', salary: 125000, hireDate: '2019-01-10', age: 38, location: 'Los Angeles', performanceRating: 4.7, projectsCompleted: 15, isActive: true, skills: ['Strategy', 'Leadership', 'Brand Management'], manager: null },
-  { id: 4, firstName: 'Sarah', lastName: 'Johnson', email: 'sarah.johnson@company.com', department: 'Engineering', position: 'Engineering Manager', salary: 115000, hireDate: '2018-11-05', age: 35, location: 'New York', performanceRating: 4.6, projectsCompleted: 18, isActive: true, skills: ['Team Leadership', 'Architecture', 'Python'], manager: 'David Wilson' },
-  { id: 5, firstName: 'David', lastName: 'Wilson', email: 'david.wilson@company.com', department: 'Engineering', position: 'CTO', salary: 180000, hireDate: '2017-05-12', age: 42, location: 'New York', performanceRating: 4.8, projectsCompleted: 25, isActive: true, skills: ['Technical Strategy', 'Leadership', 'Cloud Architecture'], manager: null },
-  { id: 6, firstName: 'Lisa', lastName: 'Garcia', email: 'lisa.garcia@company.com', department: 'Sales', position: 'Sales Representative', salary: 65000, hireDate: '2022-02-28', age: 26, location: 'Chicago', performanceRating: 3.9, projectsCompleted: 6, isActive: true, skills: ['CRM', 'Negotiation', 'Customer Relations'], manager: 'Robert Martinez' },
-  { id: 7, firstName: 'Robert', lastName: 'Martinez', email: 'robert.martinez@company.com', department: 'Sales', position: 'Sales Manager', salary: 92000, hireDate: '2020-09-14', age: 34, location: 'Chicago', performanceRating: 4.3, projectsCompleted: 11, isActive: true, skills: ['Sales Strategy', 'Team Management', 'B2B Sales'], manager: 'Jennifer Lee' },
-  { id: 8, firstName: 'Jennifer', lastName: 'Lee', email: 'jennifer.lee@company.com', department: 'Sales', position: 'VP Sales', salary: 135000, hireDate: '2019-06-18', age: 40, location: 'Chicago', performanceRating: 4.6, projectsCompleted: 16, isActive: true, skills: ['Strategic Sales', 'Leadership', 'Market Analysis'], manager: null },
-  { id: 9, firstName: 'James', lastName: 'Anderson', email: 'james.anderson@company.com', department: 'HR', position: 'HR Specialist', salary: 58000, hireDate: '2021-08-30', age: 28, location: 'Austin', performanceRating: 4.0, projectsCompleted: 7, isActive: true, skills: ['Recruitment', 'Employee Relations', 'HRIS'], manager: 'Karen White' },
-  { id: 10, firstName: 'Karen', lastName: 'White', email: 'karen.white@company.com', department: 'HR', position: 'HR Manager', salary: 85000, hireDate: '2019-12-02', age: 36, location: 'Austin', performanceRating: 4.4, projectsCompleted: 13, isActive: true, skills: ['HR Strategy', 'Policy Development', 'Leadership'], manager: null },
-  { id: 11, firstName: 'Alex', lastName: 'Thompson', email: 'alex.thompson@company.com', department: 'Engineering', position: 'Junior Developer', salary: 72000, hireDate: '2023-01-16', age: 24, location: 'New York', performanceRating: 3.8, projectsCompleted: 4, isActive: true, skills: ['Java', 'Spring Boot', 'MySQL'], manager: 'Sarah Johnson' },
-  { id: 12, firstName: 'Maria', lastName: 'Rodriguez', email: 'maria.rodriguez@company.com', department: 'Finance', position: 'Financial Analyst', salary: 68000, hireDate: '2021-11-08', age: 30, location: 'Miami', performanceRating: 4.1, projectsCompleted: 9, isActive: true, skills: ['Financial Modeling', 'Excel', 'SAP'], manager: 'Thomas Clark' },
-  { id: 13, firstName: 'Thomas', lastName: 'Clark', email: 'thomas.clark@company.com', department: 'Finance', position: 'Finance Manager', salary: 98000, hireDate: '2018-04-25', age: 37, location: 'Miami', performanceRating: 4.5, projectsCompleted: 14, isActive: true, skills: ['Financial Planning', 'Budget Management', 'Leadership'], manager: null },
-  { id: 14, firstName: 'Amanda', lastName: 'Taylor', email: 'amanda.taylor@company.com', department: 'Marketing', position: 'Content Specialist', salary: 55000, hireDate: '2022-06-12', age: 25, location: 'Los Angeles', performanceRating: 3.7, projectsCompleted: 5, isActive: true, skills: ['Content Writing', 'Social Media', 'Adobe Creative'], manager: 'Michael Brown' },
-  { id: 15, firstName: 'Ryan', lastName: 'Miller', email: 'ryan.miller@company.com', department: 'Engineering', position: 'DevOps Engineer', salary: 88000, hireDate: '2020-10-19', age: 31, location: 'Seattle', performanceRating: 4.3, projectsCompleted: 10, isActive: true, skills: ['AWS', 'Docker', 'Kubernetes'], manager: 'Sarah Johnson' },
-  { id: 16, firstName: 'Jessica', lastName: 'Moore', email: 'jessica.moore@company.com', department: 'Sales', position: 'Account Executive', salary: 75000, hireDate: '2021-04-03', age: 27, location: 'Denver', performanceRating: 4.0, projectsCompleted: 8, isActive: false, skills: ['Account Management', 'Salesforce', 'Presentation'], manager: 'Robert Martinez' },
-  { id: 17, firstName: 'Daniel', lastName: 'Harris', email: 'daniel.harris@company.com', department: 'Finance', position: 'Senior Accountant', salary: 73000, hireDate: '2019-08-14', age: 33, location: 'Miami', performanceRating: 4.2, projectsCompleted: 12, isActive: true, skills: ['Accounting', 'Tax Preparation', 'QuickBooks'], manager: 'Thomas Clark' },
-  { id: 18, firstName: 'Nicole', lastName: 'Jackson', email: 'nicole.jackson@company.com', department: 'HR', position: 'Recruiter', salary: 62000, hireDate: '2022-09-05', age: 29, location: 'Austin', performanceRating: 3.9, projectsCompleted: 6, isActive: true, skills: ['Talent Acquisition', 'LinkedIn Recruiter', 'Interviewing'], manager: 'Karen White' },
-  { id: 19, firstName: 'Kevin', lastName: 'Wright', email: 'kevin.wright@company.com', department: 'Engineering', position: 'QA Engineer', salary: 76000, hireDate: '2020-12-07', age: 30, location: 'Seattle', performanceRating: 4.1, projectsCompleted: 11, isActive: true, skills: ['Test Automation', 'Selenium', 'API Testing'], manager: 'Sarah Johnson' },
-  { id: 20, firstName: 'Stephanie', lastName: 'Lopez', email: 'stephanie.lopez@company.com', department: 'Marketing', position: 'Digital Marketing Specialist', salary: 64000, hireDate: '2021-12-20', age: 26, location: 'Phoenix', performanceRating: 3.8, projectsCompleted: 7, isActive: true, skills: ['Google Ads', 'Facebook Ads', 'Email Marketing'], manager: 'Michael Brown' },
-]
+  {
+    id: 1,
+    firstName: "John",
+    lastName: "Smith",
+    email: "john.smith@company.com",
+    department: "Engineering",
+    position: "Senior Developer",
+    salary: 95000,
+    hireDate: "2021-03-15",
+    age: 32,
+    location: "New York",
+    performanceRating: 4.2,
+    projectsCompleted: 12,
+    isActive: true,
+    skills: ["JavaScript", "React", "Node.js"],
+    manager: "Sarah Johnson",
+  },
+  {
+    id: 2,
+    firstName: "Emily",
+    lastName: "Davis",
+    email: "emily.davis@company.com",
+    department: "Marketing",
+    position: "Marketing Manager",
+    salary: 78000,
+    hireDate: "2020-07-22",
+    age: 29,
+    location: "Los Angeles",
+    performanceRating: 4.5,
+    projectsCompleted: 8,
+    isActive: true,
+    skills: ["Digital Marketing", "SEO", "Analytics"],
+    manager: "Michael Brown",
+  },
+  {
+    id: 3,
+    firstName: "Michael",
+    lastName: "Brown",
+    email: "michael.brown@company.com",
+    department: "Marketing",
+    position: "VP Marketing",
+    salary: 125000,
+    hireDate: "2019-01-10",
+    age: 38,
+    location: "Los Angeles",
+    performanceRating: 4.7,
+    projectsCompleted: 15,
+    isActive: true,
+    skills: ["Strategy", "Leadership", "Brand Management"],
+    manager: null,
+  },
+  {
+    id: 4,
+    firstName: "Sarah",
+    lastName: "Johnson",
+    email: "sarah.johnson@company.com",
+    department: "Engineering",
+    position: "Engineering Manager",
+    salary: 115000,
+    hireDate: "2018-11-05",
+    age: 35,
+    location: "New York",
+    performanceRating: 4.6,
+    projectsCompleted: 18,
+    isActive: true,
+    skills: ["Team Leadership", "Architecture", "Python"],
+    manager: "David Wilson",
+  },
+  {
+    id: 5,
+    firstName: "David",
+    lastName: "Wilson",
+    email: "david.wilson@company.com",
+    department: "Engineering",
+    position: "CTO",
+    salary: 180000,
+    hireDate: "2017-05-12",
+    age: 42,
+    location: "New York",
+    performanceRating: 4.8,
+    projectsCompleted: 25,
+    isActive: true,
+    skills: ["Technical Strategy", "Leadership", "Cloud Architecture"],
+    manager: null,
+  },
+  {
+    id: 6,
+    firstName: "Lisa",
+    lastName: "Garcia",
+    email: "lisa.garcia@company.com",
+    department: "Sales",
+    position: "Sales Representative",
+    salary: 65000,
+    hireDate: "2022-02-28",
+    age: 26,
+    location: "Chicago",
+    performanceRating: 3.9,
+    projectsCompleted: 6,
+    isActive: true,
+    skills: ["CRM", "Negotiation", "Customer Relations"],
+    manager: "Robert Martinez",
+  },
+  {
+    id: 7,
+    firstName: "Robert",
+    lastName: "Martinez",
+    email: "robert.martinez@company.com",
+    department: "Sales",
+    position: "Sales Manager",
+    salary: 92000,
+    hireDate: "2020-09-14",
+    age: 34,
+    location: "Chicago",
+    performanceRating: 4.3,
+    projectsCompleted: 11,
+    isActive: true,
+    skills: ["Sales Strategy", "Team Management", "B2B Sales"],
+    manager: "Jennifer Lee",
+  },
+  {
+    id: 8,
+    firstName: "Jennifer",
+    lastName: "Lee",
+    email: "jennifer.lee@company.com",
+    department: "Sales",
+    position: "VP Sales",
+    salary: 135000,
+    hireDate: "2019-06-18",
+    age: 40,
+    location: "Chicago",
+    performanceRating: 4.6,
+    projectsCompleted: 16,
+    isActive: true,
+    skills: ["Strategic Sales", "Leadership", "Market Analysis"],
+    manager: null,
+  },
+  {
+    id: 9,
+    firstName: "James",
+    lastName: "Anderson",
+    email: "james.anderson@company.com",
+    department: "HR",
+    position: "HR Specialist",
+    salary: 58000,
+    hireDate: "2021-08-30",
+    age: 28,
+    location: "Austin",
+    performanceRating: 4.0,
+    projectsCompleted: 7,
+    isActive: true,
+    skills: ["Recruitment", "Employee Relations", "HRIS"],
+    manager: "Karen White",
+  },
+  {
+    id: 10,
+    firstName: "Karen",
+    lastName: "White",
+    email: "karen.white@company.com",
+    department: "HR",
+    position: "HR Manager",
+    salary: 85000,
+    hireDate: "2019-12-02",
+    age: 36,
+    location: "Austin",
+    performanceRating: 4.4,
+    projectsCompleted: 13,
+    isActive: true,
+    skills: ["HR Strategy", "Policy Development", "Leadership"],
+    manager: null,
+  },
+  {
+    id: 11,
+    firstName: "Alex",
+    lastName: "Thompson",
+    email: "alex.thompson@company.com",
+    department: "Engineering",
+    position: "Junior Developer",
+    salary: 72000,
+    hireDate: "2023-01-16",
+    age: 24,
+    location: "New York",
+    performanceRating: 3.8,
+    projectsCompleted: 4,
+    isActive: true,
+    skills: ["Java", "Spring Boot", "MySQL"],
+    manager: "Sarah Johnson",
+  },
+  {
+    id: 12,
+    firstName: "Maria",
+    lastName: "Rodriguez",
+    email: "maria.rodriguez@company.com",
+    department: "Finance",
+    position: "Financial Analyst",
+    salary: 68000,
+    hireDate: "2021-11-08",
+    age: 30,
+    location: "Miami",
+    performanceRating: 4.1,
+    projectsCompleted: 9,
+    isActive: true,
+    skills: ["Financial Modeling", "Excel", "SAP"],
+    manager: "Thomas Clark",
+  },
+  {
+    id: 13,
+    firstName: "Thomas",
+    lastName: "Clark",
+    email: "thomas.clark@company.com",
+    department: "Finance",
+    position: "Finance Manager",
+    salary: 98000,
+    hireDate: "2018-04-25",
+    age: 37,
+    location: "Miami",
+    performanceRating: 4.5,
+    projectsCompleted: 14,
+    isActive: true,
+    skills: ["Financial Planning", "Budget Management", "Leadership"],
+    manager: null,
+  },
+  {
+    id: 14,
+    firstName: "Amanda",
+    lastName: "Taylor",
+    email: "amanda.taylor@company.com",
+    department: "Marketing",
+    position: "Content Specialist",
+    salary: 55000,
+    hireDate: "2022-06-12",
+    age: 25,
+    location: "Los Angeles",
+    performanceRating: 3.7,
+    projectsCompleted: 5,
+    isActive: true,
+    skills: ["Content Writing", "Social Media", "Adobe Creative"],
+    manager: "Michael Brown",
+  },
+  {
+    id: 15,
+    firstName: "Ryan",
+    lastName: "Miller",
+    email: "ryan.miller@company.com",
+    department: "Engineering",
+    position: "DevOps Engineer",
+    salary: 88000,
+    hireDate: "2020-10-19",
+    age: 31,
+    location: "Seattle",
+    performanceRating: 4.3,
+    projectsCompleted: 10,
+    isActive: true,
+    skills: ["AWS", "Docker", "Kubernetes"],
+    manager: "Sarah Johnson",
+  },
+  {
+    id: 16,
+    firstName: "Jessica",
+    lastName: "Moore",
+    email: "jessica.moore@company.com",
+    department: "Sales",
+    position: "Account Executive",
+    salary: 75000,
+    hireDate: "2021-04-03",
+    age: 27,
+    location: "Denver",
+    performanceRating: 4.0,
+    projectsCompleted: 8,
+    isActive: false,
+    skills: ["Account Management", "Salesforce", "Presentation"],
+    manager: "Robert Martinez",
+  },
+  {
+    id: 17,
+    firstName: "Daniel",
+    lastName: "Harris",
+    email: "daniel.harris@company.com",
+    department: "Finance",
+    position: "Senior Accountant",
+    salary: 73000,
+    hireDate: "2019-08-14",
+    age: 33,
+    location: "Miami",
+    performanceRating: 4.2,
+    projectsCompleted: 12,
+    isActive: true,
+    skills: ["Accounting", "Tax Preparation", "QuickBooks"],
+    manager: "Thomas Clark",
+  },
+  {
+    id: 18,
+    firstName: "Nicole",
+    lastName: "Jackson",
+    email: "nicole.jackson@company.com",
+    department: "HR",
+    position: "Recruiter",
+    salary: 62000,
+    hireDate: "2022-09-05",
+    age: 29,
+    location: "Austin",
+    performanceRating: 3.9,
+    projectsCompleted: 6,
+    isActive: true,
+    skills: ["Talent Acquisition", "LinkedIn Recruiter", "Interviewing"],
+    manager: "Karen White",
+  },
+  {
+    id: 19,
+    firstName: "Kevin",
+    lastName: "Wright",
+    email: "kevin.wright@company.com",
+    department: "Engineering",
+    position: "QA Engineer",
+    salary: 76000,
+    hireDate: "2020-12-07",
+    age: 30,
+    location: "Seattle",
+    performanceRating: 4.1,
+    projectsCompleted: 11,
+    isActive: true,
+    skills: ["Test Automation", "Selenium", "API Testing"],
+    manager: "Sarah Johnson",
+  },
+  {
+    id: 20,
+    firstName: "Stephanie",
+    lastName: "Lopez",
+    email: "stephanie.lopez@company.com",
+    department: "Marketing",
+    position: "Digital Marketing Specialist",
+    salary: 64000,
+    hireDate: "2021-12-20",
+    age: 26,
+    location: "Phoenix",
+    performanceRating: 3.8,
+    projectsCompleted: 7,
+    isActive: true,
+    skills: ["Google Ads", "Facebook Ads", "Email Marketing"],
+    manager: "Michael Brown",
+  },
+];
 
-const statusClass = { Active: 'success', Inactive: 'danger' }
-const money = (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)
+const statusClass = { Active: "success", Inactive: "danger" };
+const money = (value) =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value);
 
 function MetricCard({ label, value, change, trend, icon: Icon, tone }) {
-  return <article className={`metric-card ${tone}`}><div className="metric-top"><span>{label}</span><span className="metric-icon"><Icon size={17} /></span></div><strong>{value}</strong><div className={`trend ${trend === 'down' ? 'down' : ''}`}>{trend === 'down' ? <ArrowDownRight size={14} /> : <ArrowUpRight size={14} />} {change}<span>vs last quarter</span></div></article>
+  return (
+    <article className={`metric-card ${tone}`}>
+      <div className="metric-top">
+        <span>{label}</span>
+        <span className="metric-icon">
+          <Icon size={17} />
+        </span>
+      </div>
+      <strong>{value}</strong>
+      <div className={`trend ${trend === "down" ? "down" : ""}`}>
+        {trend === "down" ? (
+          <ArrowDownRight size={14} />
+        ) : (
+          <ArrowUpRight size={14} />
+        )}{" "}
+        {change}
+        <span>vs last quarter</span>
+      </div>
+    </article>
+  );
 }
 
 function App() {
-  const gridRef = useRef(null)
-  const [search, setSearch] = useState('')
-  const [department, setDepartment] = useState('All departments')
-  const [location, setLocation] = useState('All locations')
-  const [activeFilter, setActiveFilter] = useState('All employees')
-  const activeCount = rows.filter((row) => row.isActive).length
-  const averageSalary = rows.reduce((total, row) => total + row.salary, 0) / rows.length
-  const averageRating = rows.reduce((total, row) => total + row.performanceRating, 0) / rows.length
-  const departments = [...new Set(rows.map((row) => row.department))]
-  const locations = [...new Set(rows.map((row) => row.location))]
-  const filteredRows = useMemo(() => rows.filter((row) => {
-    const matchesSearch = Object.values(row).flat().some((value) => String(value).toLowerCase().includes(search.toLowerCase()))
-    return matchesSearch && (department === 'All departments' || row.department === department) && (location === 'All locations' || row.location === location) && (activeFilter === 'All employees' || (activeFilter === 'Active only' ? row.isActive : !row.isActive))
-  }), [search, department, location, activeFilter])
-  const columnDefs = useMemo(() => [
-    { field: 'firstName', headerName: 'Employee', flex: 1.35, minWidth: 190, valueGetter: ({ data }) => `${data.firstName} ${data.lastName}`, cellRenderer: ({ data }) => <div className="account-cell"><span className="account-mark">{data.firstName[0]}{data.lastName[0]}</span><span><b>{data.firstName} {data.lastName}</b><small>{data.email}</small></span></div> },
-    { field: 'department', headerName: 'Department', minWidth: 125 }, { field: 'position', headerName: 'Position', minWidth: 180 },
-    { field: 'salary', headerName: 'Salary', minWidth: 115, type: 'numericColumn', valueFormatter: ({ value }) => money(value) },
-    { field: 'performanceRating', headerName: 'Rating', minWidth: 110, cellRenderer: ({ value }) => <div className="probability"><span>{value.toFixed(1)}</span><i><em style={{ width: `${value * 20}%` }} /></i></div> },
-    { field: 'projectsCompleted', headerName: 'Projects', minWidth: 100 }, { field: 'age', headerName: 'Age', minWidth: 80 }, { field: 'location', headerName: 'Location', minWidth: 115 },
-    { field: 'skills', headerName: 'Skills', minWidth: 210, valueFormatter: ({ value }) => value.join(', ') }, { field: 'manager', headerName: 'Manager', minWidth: 140, valueFormatter: ({ value }) => value || 'None' },
-    { field: 'isActive', headerName: 'Status', minWidth: 105, cellRenderer: ({ value }) => <span className={`status-pill ${statusClass[value ? 'Active' : 'Inactive']}`}>{value ? 'Active' : 'Inactive'}</span> },
-    { field: 'hireDate', headerName: 'Hire date', minWidth: 115 },
-  ], [])
-  const resetFilters = () => { setSearch(''); setDepartment('All departments'); setLocation('All locations'); setActiveFilter('All employees') }
+  const gridRef = useRef(null);
+  const [search, setSearch] = useState("");
+  const [department, setDepartment] = useState("All departments");
+  const [location, setLocation] = useState("All locations");
+  const [activeFilter, setActiveFilter] = useState("All employees");
+  const activeCount = rows.filter((row) => row.isActive).length;
+  const averageSalary =
+    rows.reduce((total, row) => total + row.salary, 0) / rows.length;
+  const averageRating =
+    rows.reduce((total, row) => total + row.performanceRating, 0) / rows.length;
+  const departments = [...new Set(rows.map((row) => row.department))];
+  const locations = [...new Set(rows.map((row) => row.location))];
+  const filteredRows = useMemo(
+    () =>
+      rows.filter((row) => {
+        const matchesSearch = Object.values(row)
+          .flat()
+          .some((value) =>
+            String(value).toLowerCase().includes(search.toLowerCase()),
+          );
+        return (
+          matchesSearch &&
+          (department === "All departments" || row.department === department) &&
+          (location === "All locations" || row.location === location) &&
+          (activeFilter === "All employees" ||
+            (activeFilter === "Active only" ? row.isActive : !row.isActive))
+        );
+      }),
+    [search, department, location, activeFilter],
+  );
+  const columnDefs = useMemo(
+    () => [
+      {
+        field: "firstName",
+        headerName: "Employee",
+        flex: 1.35,
+        minWidth: 190,
+        valueGetter: ({ data }) => `${data.firstName} ${data.lastName}`,
+        cellRenderer: ({ data }) => (
+          <div className="account-cell">
+            <span className="account-mark">
+              {data.firstName[0]}
+              {data.lastName[0]}
+            </span>
+            <span>
+              <b>
+                {data.firstName} {data.lastName}
+              </b>
+              <small>{data.email}</small>
+            </span>
+          </div>
+        ),
+      },
+      { field: "department", headerName: "Department", minWidth: 125 },
+      { field: "position", headerName: "Position", minWidth: 180 },
+      {
+        field: "salary",
+        headerName: "Salary",
+        minWidth: 115,
+        type: "numericColumn",
+        valueFormatter: ({ value }) => money(value),
+      },
+      {
+        field: "performanceRating",
+        headerName: "Rating",
+        minWidth: 110,
+        cellRenderer: ({ value }) => (
+          <div className="probability">
+            <span>{value.toFixed(1)}</span>
+            <i>
+              <em style={{ width: `${value * 20}%` }} />
+            </i>
+          </div>
+        ),
+      },
+      { field: "projectsCompleted", headerName: "Projects", minWidth: 100 },
+      { field: "age", headerName: "Age", minWidth: 80 },
+      { field: "location", headerName: "Location", minWidth: 115 },
+      {
+        field: "skills",
+        headerName: "Skills",
+        minWidth: 210,
+        valueFormatter: ({ value }) => value.join(", "),
+      },
+      {
+        field: "manager",
+        headerName: "Manager",
+        minWidth: 140,
+        valueFormatter: ({ value }) => value || "None",
+      },
+      {
+        field: "isActive",
+        headerName: "Status",
+        minWidth: 105,
+        cellRenderer: ({ value }) => (
+          <span
+            className={`status-pill ${statusClass[value ? "Active" : "Inactive"]}`}
+          >
+            {value ? "Active" : "Inactive"}
+          </span>
+        ),
+      },
+      { field: "hireDate", headerName: "Hire date", minWidth: 115 },
+    ],
+    [],
+  );
+  const resetFilters = () => {
+    setSearch("");
+    setDepartment("All departments");
+    setLocation("All locations");
+    setActiveFilter("All employees");
+  };
 
-  return <div className="app-shell">
-    <aside className="sidebar"><div className="brand"><span className="brand-mark">F</span><span>fact<span>wise</span></span></div><div className="workspace-switcher"><span className="workspace-dot" /> People workspace <ChevronDown size={14} /></div><nav><p className="nav-label">Workspace</p><a className="active"><LayoutDashboard size={17} /> Overview</a><a><Users size={17} /> Employees <span className="nav-count">20</span></a><a><BarChart3 size={17} /> Analytics</a><a><Activity size={17} /> Performance</a><p className="nav-label nav-space">Manage</p><a><Settings2 size={17} /> Settings</a></nav><div className="sidebar-bottom"><div className="help-card"><Sparkles size={17} /><div><b>People insights ready</b><small>3 actions need your attention</small></div></div><div className="profile"><span className="avatar">UR</span><span><b></b><small>Administrator</small></span><ChevronDown size={14} /></div></div></aside>
-    <main className="main-content"><header className="topbar"><div className="breadcrumb">People workspace <span>/</span> Overview</div><div className="top-actions"><button className="icon-button" title="Notifications"><Bell size={18} /><i /></button><button className="date-button"><CalendarDays size={16} /> Q2 2024 <ChevronDown size={14} /></button></div></header><div className="page-content">
-      <section className="page-heading"><div><div className="eyebrow">Monday, June 17, 2024 <span className="live-dot" /> Live data</div><h1>People overview <span>↗</span></h1><p>Understand your team, talent distribution, and performance at a glance.</p></div><button className="primary-button" onClick={() => gridRef.current?.api.exportDataAsCsv()}><Download size={16} /> Export directory</button></section>
-      <section className="metrics"><MetricCard label="Total employees" value={rows.length} change="5.3%" icon={Users} tone="blue" /><MetricCard label="Active employees" value={activeCount} change="4.1%" icon={Activity} tone="mint" /><MetricCard label="Average salary" value={money(Math.round(averageSalary))} change="2.8%" icon={BarChart3} tone="gold" /><MetricCard label="Avg. performance" value={averageRating.toFixed(1)} change="0.6%" trend="down" icon={Sparkles} tone="coral" /></section>
-      <section className="insight-strip"><div className="insight-icon"><Sparkles size={19} /></div><div><b>Your team is performing well.</b> Engineering is the largest department with 6 employees, while the company average performance rating is {averageRating.toFixed(1)}.</div><button>View insights <ArrowUpRight size={15} /></button></section>
-      <section className="table-section"><div className="section-heading"><div><h2>Employee directory</h2><p>Browse, filter, and export your complete employee record.</p></div><div className="table-meta"><span className="synced"><span /> Updated just now</span><button className="icon-button small" title="Refresh data"><RefreshCw size={16} /></button></div></div><div className="toolbar"><div className="search-box"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search employees, skills..." /></div><div className="filter-group"><div className="select-wrap"><Filter size={15} /><select value={department} onChange={(event) => setDepartment(event.target.value)}><option>All departments</option>{departments.map((item) => <option key={item}>{item}</option>)}</select></div><div className="select-wrap"><ListFilter size={15} /><select value={location} onChange={(event) => setLocation(event.target.value)}><option>All locations</option>{locations.map((item) => <option key={item}>{item}</option>)}</select></div><select className="compact-select" value={activeFilter} onChange={(event) => setActiveFilter(event.target.value)}><option>All employees</option><option>Active only</option><option>Inactive only</option></select><button className="reset-button" onClick={resetFilters}>Reset</button></div></div><div className="grid-wrap"><AgGridReact ref={gridRef} rowData={filteredRows} columnDefs={columnDefs} theme={themeQuartz} defaultColDef={{ sortable: true, resizable: true, filter: true }} rowHeight={64} pagination paginationPageSize={10} paginationPageSizeSelector={[10, 20]} animateRows /></div><div className="table-footer"><span>Showing <b>{filteredRows.length}</b> of {rows.length} employees</span><span><i className="legend-dot blue" /> Active <i className="legend-dot red" /> Inactive</span></div></section>
-    </div></main>
-  </div>
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand">
+          <span className="brand-mark">F</span>
+          <span>
+            fact<span>wise</span>
+          </span>
+        </div>
+        <div className="workspace-switcher">
+          <span className="workspace-dot" /> People workspace{" "}
+          <ChevronDown size={14} />
+        </div>
+        <nav>
+          <p className="nav-label">Workspace</p>
+          <a className="active">
+            <LayoutDashboard size={17} /> Overview
+          </a>
+          <a>
+            <Users size={17} /> Employees <span className="nav-count">20</span>
+          </a>
+          <a>
+            <BarChart3 size={17} /> Analytics
+          </a>
+          <a>
+            <Activity size={17} /> Performance
+          </a>
+          <p className="nav-label nav-space">Manage</p>
+          <a>
+            <Settings2 size={17} /> Settings
+          </a>
+        </nav>
+        <div className="sidebar-bottom">
+          <div className="help-card">
+            <Sparkles size={17} />
+            <div>
+              <b>People insights ready</b>
+              <small>3 actions need your attention</small>
+            </div>
+          </div>
+          <div className="profile">
+            <span className="avatar">UR</span>
+            <span>
+              <b></b>
+              <small>Administrator</small>
+            </span>
+            <ChevronDown size={14} />
+          </div>
+        </div>
+      </aside>
+      <main className="main-content">
+        <header className="topbar">
+          <div className="breadcrumb">
+            People workspace <span>/</span> Overview
+          </div>
+          <div className="top-actions">
+            <button className="icon-button" title="Notifications">
+              <Bell size={18} />
+              <i />
+            </button>
+            <button className="date-button">
+              <CalendarDays size={16} /> Q2 2024 <ChevronDown size={14} />
+            </button>
+          </div>
+        </header>
+        <div className="page-content">
+          <section className="page-heading">
+            <div>
+              <div className="eyebrow">
+                Monday, June 17, 2024 <span className="live-dot" /> Live data
+              </div>
+              <h1>
+                People overview <span>↗</span>
+              </h1>
+              <p>
+                Understand your team, talent distribution, and performance at a
+                glance.
+              </p>
+            </div>
+            <button
+              className="primary-button"
+              onClick={() => gridRef.current?.api.exportDataAsCsv()}
+            >
+              <Download size={16} /> Export directory
+            </button>
+          </section>
+          <section className="metrics">
+            <MetricCard
+              label="Total employees"
+              value={rows.length}
+              change="5.3%"
+              icon={Users}
+              tone="blue"
+            />
+            <MetricCard
+              label="Active employees"
+              value={activeCount}
+              change="4.1%"
+              icon={Activity}
+              tone="mint"
+            />
+            <MetricCard
+              label="Average salary"
+              value={money(Math.round(averageSalary))}
+              change="2.8%"
+              icon={BarChart3}
+              tone="gold"
+            />
+            <MetricCard
+              label="Avg. performance"
+              value={averageRating.toFixed(1)}
+              change="0.6%"
+              trend="down"
+              icon={Sparkles}
+              tone="coral"
+            />
+          </section>
+          <section className="insight-strip">
+            <div className="insight-icon">
+              <Sparkles size={19} />
+            </div>
+            <div>
+              <b>Your team is performing well.</b> Engineering is the largest
+              department with 6 employees, while the company average performance
+              rating is {averageRating.toFixed(1)}.
+            </div>
+            <button>
+              View insights <ArrowUpRight size={15} />
+            </button>
+          </section>
+          <section className="table-section">
+            <div className="section-heading">
+              <div>
+                <h2>Employee directory</h2>
+                <p>Browse, filter, and export your complete employee record.</p>
+              </div>
+              <div className="table-meta">
+                <span className="synced">
+                  <span /> Updated just now
+                </span>
+                <button className="icon-button small" title="Refresh data">
+                  <RefreshCw size={16} />
+                </button>
+              </div>
+            </div>
+            <div className="toolbar">
+              <div className="search-box">
+                <Search size={17} />
+                <input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search employees, skills..."
+                />
+              </div>
+              <div className="filter-group">
+                <div className="select-wrap">
+                  <Filter size={15} />
+                  <select
+                    value={department}
+                    onChange={(event) => setDepartment(event.target.value)}
+                  >
+                    <option>All departments</option>
+                    {departments.map((item) => (
+                      <option key={item}>{item}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="select-wrap">
+                  <ListFilter size={15} />
+                  <select
+                    value={location}
+                    onChange={(event) => setLocation(event.target.value)}
+                  >
+                    <option>All locations</option>
+                    {locations.map((item) => (
+                      <option key={item}>{item}</option>
+                    ))}
+                  </select>
+                </div>
+                <select
+                  className="compact-select"
+                  value={activeFilter}
+                  onChange={(event) => setActiveFilter(event.target.value)}
+                >
+                  <option>All employees</option>
+                  <option>Active only</option>
+                  <option>Inactive only</option>
+                </select>
+                <button className="reset-button" onClick={resetFilters}>
+                  Reset
+                </button>
+              </div>
+            </div>
+            <div className="grid-wrap">
+              <AgGridReact
+                ref={gridRef}
+                rowData={filteredRows}
+                columnDefs={columnDefs}
+                theme={themeQuartz}
+                defaultColDef={{
+                  sortable: true,
+                  resizable: true,
+                  filter: true,
+                }}
+                rowHeight={64}
+                pagination
+                paginationPageSize={10}
+                paginationPageSizeSelector={[10, 20]}
+                animateRows
+              />
+            </div>
+            <div className="table-footer">
+              <span>
+                Showing <b>{filteredRows.length}</b> of {rows.length} employees
+              </span>
+              <span>
+                <i className="legend-dot blue" /> Active{" "}
+                <i className="legend-dot red" /> Inactive
+              </span>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
